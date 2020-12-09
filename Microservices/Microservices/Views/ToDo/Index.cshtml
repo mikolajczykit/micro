@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Web.Models.ToDoItemViewModel>
+@{
+    ViewData["Title"] = "To do list";
+}
+
+<div class="text-center">
+    <h1 class="display-4">To do list</h1>
+    <table>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Description</td>
+                    <td>@item.DueDate.ToString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <a href ="@Url.Action("Create")">Add new</a>
+</div>
+

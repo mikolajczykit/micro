@@ -1,0 +1,15 @@
+﻿@model CreateToDoListItemViewModel
+@{
+    ViewData["Title"] = "Add new";
+}
+<div class="text-center">
+    <form asp-controller="ToDo" asp-action="Create" method="post">
+        <label asp-for="@Model.Title"></label> <br />
+        <input asp-for="@Model.Title" /> <br />
+        <label asp-for="@Model.Description"></label> <br />
+        <input asp-for="@Model.Description" /> <br />
+        <label asp-for="@Model.DueDate"></label> <br />
+        <input asp-for="@Model.DueDate" /> <br />
+        <input type="submit" id="submit" value="Submit" />
+    </form>
+</div>
