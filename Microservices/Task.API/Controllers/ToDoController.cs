@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Task.API.Application.Queries;
 using Task.API.Model;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
 using Task.Infrastructure;
@@ -17,25 +18,31 @@ namespace Task.API.Controllers
     {
         private readonly ILogger<ToDoController> _logger;
         private readonly ITaskDbContext _dbContext;
+        private readonly ITaskQueries _taskQueries;
 
-        public ToDoController(ILogger<ToDoController> logger, ITaskDbContext dbContext)
+        public ToDoController(ILogger<ToDoController> logger, ITaskDbContext dbContext, ITaskQueries taskQueries)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _taskQueries = taskQueries;
         }
 
         [HttpGet]
-        public async Task<List<ToDoItemDto>> GetList()
+        public async Task<ActionResult<IEnumerable<ToDoItemViewModel>>> GetList()
         {
-            var data = await this._dbContext.Query<ToDoItem>().Select(x => new ToDoItemDto
-            {
-                Id = x.Id,
-                Description = x.Description,
-                DueDate = x.DueDate,
-                Title = x.Title
-            }).ToListAsync();
+            var todoItems = await _taskQueries.GetTasksAsync();
 
-            return data;
+            return Ok(todoItems);
+
+            //var data = await this._dbContext.Query<ToDoItem>().Select(x => new ToDoItemDto
+            //{
+            //    Id = x.Id,
+            //    Description = x.Description,
+            //    DueDate = x.DueDate,
+            //    Title = x.Title
+            //}).ToListAsync();
+
+            //return data;
         }
 
         [Route("create")]

@@ -15,5 +15,9 @@
     <ProjectReference Include="..\Task.Infrastructure\Task.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\Commands\" />
+  </ItemGroup>
+
 
 </Project>
