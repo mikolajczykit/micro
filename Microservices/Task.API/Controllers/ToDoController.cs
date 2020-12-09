@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Task.API.Application.Commands;
 using Task.API.Application.Queries;
 using Task.API.Model;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
@@ -19,12 +21,17 @@ namespace Task.API.Controllers
         private readonly ILogger<ToDoController> _logger;
         private readonly ITaskDbContext _dbContext;
         private readonly ITaskQueries _taskQueries;
+        private readonly IMediator _mediator;
 
-        public ToDoController(ILogger<ToDoController> logger, ITaskDbContext dbContext, ITaskQueries taskQueries)
+        public ToDoController(ILogger<ToDoController> logger, 
+            ITaskDbContext dbContext, 
+            ITaskQueries taskQueries,
+            IMediator mediator)
         {
             _logger = logger;
             _dbContext = dbContext;
             _taskQueries = taskQueries;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -47,17 +54,26 @@ namespace Task.API.Controllers
 
         [Route("create")]
         [HttpPost]
-        public async Task<bool> Create(ToDoItemDto dto)
+        public async Task<ActionResult<bool>> Create([FromBody] AddTaskCommand command)
         {
-            var todoItem = new ToDoItem
-            {
-                Description = dto.Description,
-                DueDate = dto.DueDate,
-                Title = dto.Title
-            };
-            await _dbContext.Query<ToDoItem>().AddAsync(todoItem);
-            var result = await _dbContext.SaveChangesAsync();
-            return result > 0 ? true : false;
+            var response = await _mediator.Send<bool>(command);
+
+            return Ok(response);
         }
+
+        //[Route("create")]
+        //[HttpPost]
+        //public async Task<bool> Create(ToDoItemDto dto)
+        //{
+        //    var todoItem = new ToDoItem
+        //    {
+        //        Description = dto.Description,
+        //        DueDate = dto.DueDate,
+        //        Title = dto.Title
+        //    };
+        //    await _dbContext.Query<ToDoItem>().AddAsync(todoItem);
+        //    var result = await _dbContext.SaveChangesAsync();
+        //    return result > 0 ? true : false;
+        //}
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Task.API.Application.Queries;
 using Task.Infrastructure;
+using MediatR;
 
 namespace Task.API
 {
@@ -34,6 +35,7 @@ namespace Task.API
             });
 
             services.AddTransient<ITaskQueries, TaskQueries>();
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
