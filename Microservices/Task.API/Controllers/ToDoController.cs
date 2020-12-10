@@ -61,6 +61,15 @@ namespace Task.API.Controllers
             return Ok(response);
         }
 
+        [Route("delete/{id}")]
+        [HttpDelete]
+        public async Task<ActionResult<bool>> Delete([FromRoute] DeleteTaskCommand command)
+        {
+            var response = await _mediator.Send<bool>(command);
+
+            return Ok(response);
+        }
+
         //[Route("create")]
         //[HttpPost]
         //public async Task<bool> Create(ToDoItemDto dto)

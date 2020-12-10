@@ -11,5 +11,7 @@ namespace Web.Services
         Task<IEnumerable<ToDoItemViewModel>> GetTasksAsync();
 
         Task<bool> AddTaskAsync(CreateToDoListItemViewModel viewModel);
+
+        Task<bool> DeleteTaskAsync(int id);
     }
 }

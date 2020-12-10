@@ -13,11 +13,47 @@
                     <td>@item.Title</td>
                     <td>@item.Description</td>
                     <td>@item.DueDate.ToString()</td>
+                    <td>
+                        @*<input class="edit" type="button" value="Edit" data-item="@item.Id" />*@
+                        <input class="delete" type="button" value="Delete" data-item="@item.Id" />
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
     <br />
-    <a href ="@Url.Action("Create")">Add new</a>
+    <a href="@Url.Action("Create")">Add new</a>
 </div>
+
+@section Scripts{
+    <script>
+        var todoModule = function () {
+            //function editItem() {
+            //    var id = $(this).data('item');
+            //    window.location.href = window.location.href + 'Edit/' + id;
+            //}
+
+            function deleteItem() {
+                var id = $(this).data('item');
+
+                $.post("@Url.Action("Delete", "ToDo")" +'/' + id, function () {
+                    location.reload();
+                });
+            }
+
+            var bindEvents = function () {
+                //$('.edit').on('click', editItem);
+                $('.delete').on('click', deleteItem);
+            }
+
+            return {
+                bindEvents: bindEvents
+            }
+        }();
+
+        $(document).ready(function () {
+            todoModule.bindEvents();
+        });
+    </script>
+}
 

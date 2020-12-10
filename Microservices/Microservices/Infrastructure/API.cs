@@ -18,6 +18,11 @@ namespace Web.Infrastructure
             {
                 return baseUri + "/create";
             }
+
+            public static string DeleteTask(string baseUri)
+            {
+                return baseUri + "/delete";
+            }
         }
     }
 }

@@ -32,6 +32,15 @@ namespace Web.Services
             return responseObject.IsSuccessStatusCode;
         }
 
+        public async Task<bool> DeleteTaskAsync(int id)
+        {
+            var microserviceDeleteTaskUrl = API.Task.DeleteTask(_baseMicroserviceUrl);
+
+            var responseObject = await _httpClient.DeleteAsync($"{microserviceDeleteTaskUrl}/{id}");
+
+            return responseObject.IsSuccessStatusCode;
+        }
+
         public async Task<IEnumerable<ToDoItemViewModel>> GetTasksAsync()
         {
             var microserviceGetTasksUrl = API.Task.GetAllTasks(_baseMicroserviceUrl);

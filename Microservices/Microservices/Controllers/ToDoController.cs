@@ -53,6 +53,19 @@ namespace Web.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var success = await _taskService.DeleteTaskAsync(id);
+
+            if (!success)
+            {
+                return Error();
+            }
+
+            return Ok();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
