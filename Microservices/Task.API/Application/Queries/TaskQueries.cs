@@ -1,33 +1,38 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
-using Task.Infrastructure;
+using System.Data.SqlClient;
+using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace Task.API.Application.Queries
 {
     public class TaskQueries : ITaskQueries
-    {
-        private ITaskDbContext _dbContext { get; set; }
-        
-        public TaskQueries(ITaskDbContext dbContext)
+    {        
+        private readonly IConfiguration _configuration;
+        public TaskQueries(IConfiguration configuration)
         {
-            _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         public async Task<List<ToDoItemViewModel>> GetTasksAsync()
         {
-            var data = await _dbContext.Query<ToDoItem>().Select(x => new ToDoItemViewModel
+            string sql = "SELECT * FROM task.ToDoItems";
+            
+            using (SqlConnection connection = new SqlConnection(@_configuration.GetConnectionString("Task")))
             {
-                Id = x.Id,
-                Description = x.Description,
-                DueDate = x.DueDate,
-                Title = x.Title
-            }).ToListAsync();
-
-            return data;
+                var result = await connection.QueryAsync<ToDoItem>(sql);
+                var data = result.Select(x => new ToDoItemViewModel
+                {
+                    Description = x.Description,
+                    DueDate = x.DueDate,
+                    Title = x.Title,
+                    Id = x.Id
+                }).AsList();
+                return data;
+            }
         }
     }
 }

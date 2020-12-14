@@ -6,14 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Task.API.Application.Queries;
-using Task.Infrastructure;
 using MediatR;
+using System.Reflection;
 
 namespace Task.API
 {
@@ -30,10 +29,6 @@ namespace Task.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<ITaskDbContext, TaskDbContext>(options => {
-                options.UseSqlServer(@Configuration.GetConnectionString("Task"));
-            });
-
             services.AddTransient<ITaskQueries, TaskQueries>();
             services.AddMediatR(typeof(Startup));
         }

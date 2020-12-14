@@ -1,20 +1,26 @@
-﻿using MediatR;
+﻿using Dapper.Contrib.Extensions;
+using MediatR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
-using Task.Infrastructure;
 
 namespace Task.API.Application.Commands
 {
     public class AddTaskCommandHandler : IRequestHandler<AddTaskCommand, bool>
     {
-        private readonly ITaskDbContext _dbContext;
-        public AddTaskCommandHandler(ITaskDbContext dbContext)
+        private readonly ILogger<AddTaskCommandHandler> _logger;
+        private readonly IConfiguration _configuration;
+
+        public AddTaskCommandHandler(IConfiguration configuration, ILogger<AddTaskCommandHandler> logger)
         {
-            _dbContext = dbContext;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(AddTaskCommand command, CancellationToken cancellationToken)
@@ -25,10 +31,19 @@ namespace Task.API.Application.Commands
                 DueDate = command.DueDate,
                 Title = command.Title
             };
-
-            await _dbContext.Query<ToDoItem>().AddAsync(todoItem);
-            var result = await _dbContext.SaveChangesAsync();
-            return result > 0 ? true : false;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(@_configuration.GetConnectionString("Task")))
+                {
+                    var result = await connection.InsertAsync<ToDoItem>(todoItem);
+                    return result > 0;
+                }
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
         }
     }
 

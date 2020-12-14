@@ -1,34 +1,36 @@
-﻿using MediatR;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
-using Task.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 namespace Task.API.Application.Commands
 {
     public class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand, bool>
     {
-        private readonly ITaskDbContext _dbContext;
-        public DeleteTaskCommandHandler(ITaskDbContext dbContext)
+        private readonly IConfiguration _configuration;
+        public DeleteTaskCommandHandler(IConfiguration configuration)
         {
-            _dbContext = dbContext;
+            _configuration = configuration;
         }
 
         public async Task<bool> Handle(DeleteTaskCommand command, CancellationToken cancellationToken)
         {
-            var item = await _dbContext.Query<ToDoItem>().FirstOrDefaultAsync(x => x.Id == command.Id);
-            if (item != null) 
-            {
-                _dbContext.Query<ToDoItem>().Remove(item);
-                var result = await _dbContext.SaveChangesAsync();
-                return result > 0 ? true : false;
-            }
+            string sql = "DELETE FROM task.ToDoItems Where Id = @Id";
+            var @params = new { Id = command.Id };
             
-            return false;
+            using (SqlConnection connection = new SqlConnection(@_configuration.GetConnectionString("Task")))
+            {
+                var result = await connection.ExecuteAsync(sql, @params);
+
+                return result > 0;
+            }
         }
     }
 
