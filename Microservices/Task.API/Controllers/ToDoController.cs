@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Task.API.Application.Commands;
 using Task.API.Application.Queries;
-using Task.API.Model;
 using Task.Domain.AggregatesModel.ToDoItemAggregate;
 using Task.Infrastructure;
 

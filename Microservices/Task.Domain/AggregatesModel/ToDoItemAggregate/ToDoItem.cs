@@ -5,11 +5,20 @@ using Task.Domain.SeedWork;
 
 namespace Task.Domain.AggregatesModel.ToDoItemAggregate
 {
-    public class ToDoItem : Entity
+    public class ToDoItem : Entity, IAggregateRoot
     {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime DueDate { get; set; }
+        public ToDoItem(string title, string description, DateTime dueDate) 
+        {
+            this.Title = title;
+            this.Description = description;
+            this.DueDate = dueDate;
+            this.UserId = 0;
+        }
+
+        public int Id { get; private set; }
+        public string Title { get; private set; }
+        public string Description { get; private set; }
+        public DateTime DueDate { get; private set; }
+        public int UserId { get; private set; }
     }
 }

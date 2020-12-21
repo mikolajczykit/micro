@@ -19,12 +19,7 @@ namespace Task.API.Application.Commands
 
         public async Task<bool> Handle(AddTaskCommand command, CancellationToken cancellationToken)
         {
-            var todoItem = new ToDoItem
-            {
-                Description = command.Description,
-                DueDate = command.DueDate,
-                Title = command.Title
-            };
+            var todoItem = new ToDoItem(command.Title, command.Description, command.DueDate);
 
             await _dbContext.Query<ToDoItem>().AddAsync(todoItem);
             var result = await _dbContext.SaveChangesAsync();
